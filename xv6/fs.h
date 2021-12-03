@@ -21,18 +21,29 @@ struct superblock {
   uint bmapstart;    // Block number of first free map block
 };
 
-#define NDIRECT 12
+/** 
+* [EXERCISE-4]: The following code is modified by Shreyans (SSP210009)
+* Added new define for double-indirect implementation
+**/
+#define NDIRECT 11
 #define NINDIRECT (BSIZE / sizeof(uint))
-#define MAXFILE (NDIRECT + NINDIRECT)
+#define NDOUBLE_INDIRECT (NINDIRECT * NINDIRECT)
+#define MAXFILE (NDIRECT + NINDIRECT + NDOUBLE_INDIRECT)
+/* End of code modified */
 
 // On-disk inode structure
 struct dinode {
-  short type;           // File type
-  short major;          // Major device number (T_DEV only)
-  short minor;          // Minor device number (T_DEV only)
-  short nlink;          // Number of links to inode in file system
-  uint size;            // Size of file (bytes)
-  uint addrs[NDIRECT+1];   // Data block addresses
+  short type;             // File type
+  short major;            // Major device number (T_DEV only)
+  short minor;            // Minor device number (T_DEV only)
+  short nlink;            // Number of links to inode in file system
+  uint size;              // Size of file (bytes)
+  /** 
+  * [EXERCISE-4]: The following code is modified by Shreyans (SSP210009)
+  * Added new index for double-indirect implementation
+  **/
+  uint addrs[NDIRECT+2];  // Data block addresses
+  /* End of code modified */
 };
 
 // Inodes per block.

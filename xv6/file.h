@@ -11,18 +11,22 @@ struct file {
 
 // in-memory copy of an inode
 struct inode {
-  uint dev;           // Device number
-  uint inum;          // Inode number
-  int ref;            // Reference count
-  struct sleeplock lock; // protects everything below here
-  int valid;          // inode has been read from disk?
-
-  short type;         // copy of disk inode
+  uint dev;               // Device number
+  uint inum;              // Inode number
+  int ref;                // Reference count
+  struct sleeplock lock;  // protects everything below here
+  int valid;              // inode has been read from disk?
+  short type;             // copy of disk inode
   short major;
   short minor;
   short nlink;
   uint size;
-  uint addrs[NDIRECT+1];
+  /** 
+  * [EXERCISE-4]: The following code is modified by Shreyans (SSP210009)
+  * Added new index for double-indirect implementation
+  **/
+  uint addrs[NDIRECT+2];
+  /* End of code modified */
 };
 
 // table mapping major device number to

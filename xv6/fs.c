@@ -396,6 +396,39 @@ bmap(struct inode *ip, uint bn)
     brelse(bp);
     return addr;
   }
+  /** 
+  * [EXERCISE-4]: The following code is added by Shreyans (SSP210009)
+  * Added double-indirect implementation
+  **/
+  bn -= NINDIRECT;
+
+  if(bn < NDOUBLE_INDIRECT){
+    // Load double indirect block, allocating if necessary.
+    if((addr = ip->addrs[NDIRECT + 1]) == 0)
+      ip->addrs[NDIRECT + 1] = addr = balloc(ip->dev);
+    bp = bread(ip->dev, addr);
+    a = (uint*)bp->data;
+
+    // load 2nd layer block.
+    uint second_index = bn / NINDIRECT;
+    if((addr = a[second_index]) == 0){
+      a[second_index] = addr = balloc(ip->dev);
+      log_write(bp);
+    }
+    brelse(bp);
+
+    // now find disk block.
+    bp = bread(ip->dev, addr);
+    a = (uint*)bp->data;
+    uint index_position = bn % NINDIRECT;
+    if((addr = a[index_position]) == 0){
+      a[index_position] = addr = balloc(ip->dev);
+      log_write(bp);
+    }
+    brelse(bp);
+    return addr;
+  }
+  /* End of code added */
 
   panic("bmap: out of range");
 }
